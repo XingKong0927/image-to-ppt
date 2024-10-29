@@ -20,3 +20,8 @@ rad.json
 *.flf
 #Test results file
 TestResults.xml
+
+*.jpg
+*.json
+*.pdf
+*.pth
