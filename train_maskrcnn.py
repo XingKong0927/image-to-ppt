@@ -2,31 +2,30 @@
 python 3.10.0
 torch 2.4.0
 torchvision 0.19.0
-
-在目标检测中， Faster R-CNN 等模型默认输出的是矩形边界框。
-如果需要检测不规则的四边形，可以使用 实例分割 模型，比如 Mask R-CNN，
-它可以生成像素级的分割掩码，从而捕获不规则的形状。
-
 """
-
 import torch
-from torch.utils.data import Dataset
-from torchvision.transforms import functional as F
-from torchvision.models.detection import maskrcnn_resnet50_fpn
+from torch.utils.data import DataLoader, Dataset
+
+import torchvision.transforms as T
+from torchvision.models.detection import maskrcnn_resnet50_fpn, MaskRCNN_ResNet50_FPN_Weights
 from torchvision.models.detection.faster_rcnn import FastRCNNPredictor
 from torchvision.models.detection.mask_rcnn import MaskRCNNPredictor
 
 import os
 import json
 import numpy as np
-from PIL import Image
 import cv2
+from PIL import Image
 
+## 继续训练用到的库
+from torchvision.models.detection import MaskRCNN
+from torchvision.models.detection import MaskRCNN_ResNet50_FPN_Weights
+from torchvision.transforms import functional as F
 
 class LabelmeDataset(Dataset):
     def __init__(self, img_dir, annotation_dir, transforms=None):
-        self.img_dir = "data\\raw"      # 图片路径
-        self.annotation_dir = "data\\annotate"  # 标注文件路径
+        self.img_dir = img_dir      # 图片路径
+        self.annotation_dir = annotation_dir  # 标注文件路径
         self.transforms = transforms
         self.imgs = list(sorted(os.listdir(img_dir)))
         self.annotations = list(sorted(os.listdir(annotation_dir)))
@@ -83,7 +82,7 @@ class LabelmeDataset(Dataset):
 def get_mask_rcnn_model(num_classes):
     # # 加载预训练的 Mask R-CNN 模型
     # model = maskrcnn_resnet50_fpn(pretrained=True)
-    from torchvision.models.detection import maskrcnn_resnet50_fpn, MaskRCNN_ResNet50_FPN_Weights
+
     # 指定权重加载
     weights = MaskRCNN_ResNet50_FPN_Weights.COCO_V1
     model = maskrcnn_resnet50_fpn(weights=weights)
@@ -103,10 +102,8 @@ def get_mask_rcnn_model(num_classes):
 def collate_fn(batch):
     return tuple(zip(*batch))
 
-
-if __name__ == '__main__':
-    from torch.utils.data import DataLoader
-    import torchvision.transforms as T
+def start_first_train():
+    """第一次训练启动！"""
 
     # 数据集路径
     img_dir = "data\\raw"
@@ -149,3 +146,44 @@ if __name__ == '__main__':
     
     torch.save(model.state_dict(), "mask_rcnn_ppt.pth")
 
+## 继续训练用到的其他函数
+def continue_training():
+    """继续训练已保存的模型"""
+    img_dir = "data\\raw1"  # 新数据集路径
+    annotation_dir = "data\\annotate1"  # 新标注文件路径
+    dataset = LabelmeDataset(img_dir, annotation_dir, transforms=T.ToTensor())
+    data_loader = DataLoader(dataset, batch_size=2, shuffle=True, num_workers=4, collate_fn=collate_fn)
+
+    num_classes = 2  # 假设两类：背景 + PPT
+    model = get_mask_rcnn_model(num_classes)
+    
+    device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
+    model.to(device)
+
+    # 加载之前训练的模型权重
+    model.load_state_dict(torch.load("mask_rcnn_ppt1.pth"))
+
+    params = [p for p in model.parameters() if p.requires_grad]
+    optimizer = torch.optim.SGD(params, lr=0.005, momentum=0.9, weight_decay=0.0005)
+
+    num_epochs = 10  # 继续训练的轮数
+    for epoch in range(num_epochs):
+        model.train()
+        for images, targets in data_loader:
+            images = [img.to(device) for img in images]
+            targets = [{k: v.to(device) for k, v in t.items()} for t in targets]
+            loss_dict = model(images, targets)
+            losses = sum(loss for loss in loss_dict.values())
+
+            optimizer.zero_grad()
+            losses.backward()
+            optimizer.step()
+        print(f"Continue Training Epoch {epoch+1}, Loss: {losses.item()}")
+    
+    torch.save(model.state_dict(), "mask_rcnn_ppt1.pth")
+
+if __name__ == '__main__':
+
+    # start_first_train()       # 启动第一次训练！
+
+    continue_training()       # 继续训练

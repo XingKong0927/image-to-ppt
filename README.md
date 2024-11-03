@@ -1,9 +1,9 @@
 # image-to-ppt
-批量处理照片，识别照片中的ppt部分，自动裁剪+变形，并生成为一个ppt
+功能概述：批量处理照片，识别照片中的ppt部分，自动裁剪+变形，并生成为一个ppt文件
 
 ## 安装库
 
-# Name                    Version                   Build  Channel
+Name                    Version                   Build  Channel
 bzip2                     1.0.8                h2bbff1b_6    defaults
 ca-certificates           2024.9.24            haa95532_0    defaults
 colorama                  0.4.6                    pypi_0    pypi
@@ -45,7 +45,7 @@ pycocotools               2.0.8                    pypi_0    pypi
 pyparsing                 3.1.4                    pypi_0    pypi
 pyqt                      5.15.10         py310hd77b12b_0    defaults
 pyqt5-sip                 12.13.0         py310h2bbff1b_0    defaults
-python                    3.10.0               h96c0403_3    defaults
+**python                    3.10.0**               h96c0403_3    defaults
 python-dateutil           2.9.0.post0              pypi_0    pypi
 pyyaml                    6.0.2                    pypi_0    pypi
 qt-main                   5.15.2               he8e5bd7_8    defaults
@@ -57,8 +57,8 @@ sqlite                    3.45.3               h2bbff1b_0    defaults
 sympy                     1.13.3                   pypi_0    pypi
 tk                        8.6.14               h0416ee5_0    defaults
 tomli                     2.0.1           py310haa95532_0    defaults
-torch                     2.4.0                    pypi_0    pypi
-torchvision               0.19.0                   pypi_0    pypi
+**torch                     2.4.0**                    pypi_0    pypi
+**torchvision               0.19.0**                   pypi_0    pypi
 typing-extensions         4.12.2                   pypi_0    pypi
 tzdata                    2024b                h04d1e81_0    defaults
 vc                        14.40                h2eaa2aa_1    defaults
@@ -68,6 +68,13 @@ xz                        5.4.6                h8cc25b3_1    defaults
 zlib                      1.2.13               h8cc25b3_1    defaults
 zstd                      1.5.6                h8880b57_0    defaults
 
+## 使用
+1. 将照片下载到“raw”系列文件夹中；
+2. 将批处理工具放到上述文件夹中，使用批处理工具“批-删部分文件名.bat”删除文件中的中文；
+3. 使用“labelme”标注照片中的ppt区域，标签设置为“ppt”，并保存标注文件到“annotate”系列文件夹中；
+4. 运行“train_maskrcnn.py”主函数，选择“第一次训练”或“继续训练”mask_rcnn模型；
+5. 运行“main.py”主函数，批处理待处理照片，并生成ppt文件；
+6. 运行“test_maskrcnn.py”可对一张照片进行单独测试。
 
 ## 思路
 
@@ -78,7 +85,7 @@ zstd                      1.5.6                h8880b57_0    defaults
 5. **批量处理**：处理多张图片，批量裁剪和调整PPT区域。
 6. **生成PDF/PPT**：将处理后的PPT图片合并为一个文件。
 
-## 弯路小知识
+## 小知识
 
 在目标检测中， Faster R-CNN 等模型默认输出的是矩形边界框。
 如果需要检测不规则的四边形，可以使用 实例分割模型，比如 Mask R-CNN，它可以生成像素级的分割掩码，从而捕获不规则的形状。
