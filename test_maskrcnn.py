@@ -221,10 +221,10 @@ def save_cropped_ppt_regions(image_path, boxes, output_dir="cropped_ppt"):
 
 if __name__ == '__main__':
     # 加载模型
-    model_path = "mask_rcnn_ppt.pth"
+    model_path = "mask_rcnn_ppt1.pth"
     model = get_trained_mask_rcnn_model(model_path, num_classes=2)
     
-    image_path = "data\\raw1\\20241103123743.jpg"     # 替换为要检测的图片路径
+    image_path = "data\\20240922173034.jpg"     # 替换为要检测的图片路径
 
     # # 预测并生成多边形曲线轮廓
     # boxes, masks = predict_ppt_regions_with_mask(model, image_path, threshold=0.8)
@@ -242,7 +242,7 @@ if __name__ == '__main__':
     # visualize_quadrilateral_results(image_path, boxes, output_path="output_with_quadrilaterals.jpg")
 
     # 保存裁剪后的PPT区域
-    save_cropped_ppt_regions(image_path, boxes, output_dir="data\\cropped_ppt1")
+    # save_cropped_ppt_regions(image_path, boxes, output_dir="data\\cropped_ppt1")
 
 
 
