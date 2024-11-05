@@ -150,7 +150,7 @@ def predict_ppt_regions_with_min_bounding_box(model, image_path, threshold=0.8, 
                 # 获取最小外接矩形并转换为四边形顶点
                 rect = cv2.minAreaRect(contour)
                 box = cv2.boxPoints(rect)
-                box = np.int0(box)  # 将坐标转换为整数
+                box = np.intp(box)  # 将坐标转换为整数
                 quadrilateral_contours.append(box)
 
             # ### 最接近的四边形 - 会有部分PPT分割在区域外
@@ -224,7 +224,7 @@ if __name__ == '__main__':
     model_path = "mask_rcnn_ppt1.pth"
     model = get_trained_mask_rcnn_model(model_path, num_classes=2)
     
-    image_path = "data\\20240922173034.jpg"     # 替换为要检测的图片路径
+    image_path = "data\\raw2\\20240922173022.jpg"     # 替换为要检测的图片路径
 
     # # 预测并生成多边形曲线轮廓
     # boxes, masks = predict_ppt_regions_with_mask(model, image_path, threshold=0.8)
