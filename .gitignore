@@ -26,3 +26,4 @@ TestResults.xml
 *.pdf
 *.pth
 *.pptx
+/__pycache__
