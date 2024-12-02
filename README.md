@@ -6,15 +6,24 @@
 **Done：**
 
 1. 模型的训练及增量训练；
+
 2. 照片中PPT区域的识别（如效果较差则需增量训练）;
+
 3. 将PPT区域裁剪出来（XXX目前是以区域的最大最小值裁剪出来的矩形）；
-4. 生成PDF/PPT文件。
+
+4. 生成PDF/PPT文件；
+
+5. 增加屏幕视频（线上会议等）自动截取PPT图片并生成PPT文件功能；
+
+6. 通过`nuitka`打包 第5项功能，界面如下。
+
+   ![image-20241202212214912](README.assets/image-20241202212214912.png)
 
 **Todo：**
 
 1. 在`Mask R-CNN`模型基础上，将识别出来的PPT区域拟合为不规则四边形，以四边形的顶点做图形变换，形成矩形PPT图片；
 2. 另一个思路：识别照片中PPT区域的边界，以识别到的边界顶点做图形变换，形成矩形PPT图片；
-3. 有时我们会参加线上会议，后续可能增加线上会议的PPT自动抓取功能。
+3. 屏幕视频截图 ——> 直接截取视频流（无需置顶显示视频）。
 
 ## 使用
 
@@ -34,73 +43,14 @@
 5. **批量处理**：处理多张图片，批量裁剪和调整PPT区域。
 6. **生成PDF/PPT**：将处理后的PPT图片合并为一个文件。
 
-## 库
+## 主要版本号
 
 | Name | Version |
 | ---- | ------- |
-| bzip2 |                     1.0.8 |
-| ca-certificates |           2024.9.24 |
-| colorama |                  0.4.6 |
-| contourpy |                 1.3.0 |
-| cycler |                    0.12.1 |
-| filelock |                  3.16.1 |
-| fonttools |                 4.54.1 |
-| fsspec |                    2024.9.0 |
-| glib |                      2.78.4 |
-| glib-tools |                2.78.4 |
-| gst-plugins-base |          1.18.5 |
-| gstreamer |                 1.18.5 |
-| icu |                       58.2 |
-| jinja2 |                    3.1.4 |
-| jpeg |                      9e |
-| kiwisolver |                1.4.7 |
-| krb5 |                      1.19.4 |
-| libclang |                  14.0.6 |
-| libclang13 |                14.0.6 |
-| libffi |                    3.4.4 |
-| libglib |                   2.78.4 |
-| libiconv |                  1.16 |
-| libogg |                    1.3.5 |
-| libpng |                    1.6.39 |
-| libvorbis |                 1.3.7 |
-| lz4-c |                     1.9.4 |
-| markupsafe |                3.0.1 |
-| matplotlib |                3.9.2 |
-| mpmath |                    1.3.0 |
-| networkx |                  3.3 |
-| numpy |                     1.26.4 |
-| openssl |                   1.1.1w |
-| packaging |                 24.1 |
-| pcre2 |                     10.42 |
-| pillow |                    10.4.0 |
-| pip |                       24.2 |
-| ply |                       3.11 |
-| pycocotools |               2.0.8 |
-| pyparsing |                 3.1.4 |
-| pyqt |                      5.15.10 |
-| pyqt5-sip |                 12.13.0 |
-| **python** |                    3.10.0 |
-| python-dateutil |           2.9.0.post0 |
-| pyyaml |                    6.0.2 |
-| qt-main |                   5.15.2 |
-| qtpy |                      2.4.1 |
-| setuptools |                75.1.0 |
-| sip |                       6.7.12 |
-| six |                       1.16.0 |
-| sqlite |                    3.45.3 |
-| sympy |                     1.13.3 |
-| tk |                        8.6.14 |
-| tomli |                     2.0.1 |
-| **torch** |                     2.4.0 |
-| **torchvision** |               0.19.0 |
-| typing-extensions |         4.12.2 |
-| tzdata |                    2024b |
-| vc |                        14.40 |
-| vs2015_runtime |            14.40.33807 |
-| wheel |                     0.44.0 |
-| xz |                        5.4.6 |
-| zlib |                      1.2.13 |
-| zstd |                      1.5.6 |
+| python |                    3.10.0 |
+| torch |                     2.4.0 |
+| torchvision |               0.19.0 |
+| nuitka         | 1.0.6       |
 
 ## 小知识XXX
 

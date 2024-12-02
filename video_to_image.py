@@ -10,7 +10,7 @@ import numpy as np
 import tkinter as tk
 
 from tkinter import messagebox
-from PIL import  Image, ImageTk, ImageGrab
+from PIL import ImageGrab
 from skimage.metrics import structural_similarity as ssim
 
 # 初始化变量
@@ -218,14 +218,13 @@ def combine_images_to_ppt():
         enable()
         return
 
-
-logo_path = "data/flerken.jpg"
-logo_image = Image.open(logo_path)  # 使用 PIL 打开图片
-logo_image = logo_image.resize((32, 32))  # 调整图标大小为适合窗口的大小
-logo_tk = ImageTk.PhotoImage(logo_image)  # 转换为 Tkinter 可显示的格式
-
-# 设置窗口图标
-root.iconphoto(True, logo_tk)
+# # python运行log
+# from PIL import  Image, ImageTk
+# logo_path = "data/flerken.jpg"
+# logo_image = Image.open(logo_path)  # 使用 PIL 打开图片
+# logo_image = logo_image.resize((32, 32))  # 调整图标大小为适合窗口的大小
+# logo_tk = ImageTk.PhotoImage(logo_image)  # 转换为 Tkinter 可显示的格式
+# root.iconphoto(True, logo_tk)             # 设置窗口图标
 
 # # 设置窗口最大尺寸
 # root.maxsize(800, 600)        # 宽，高
