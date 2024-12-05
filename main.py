@@ -6,7 +6,7 @@ torchvision 0.19.0
 import os
 
 from test_maskrcnn import get_trained_mask_rcnn_model, predict_ppt_regions_with_min_bounding_box, save_cropped_ppt_regions
-from images_to_file import images_to_pdf, images_to_ppt
+from tools.images_to_file import images_to_pdf, images_to_ppt
 
 def to_ppt_image(img_dir, cropped_dir):
     """批量处理照片并保存图片到文件夹中"""

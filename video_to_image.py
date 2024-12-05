@@ -13,6 +13,8 @@ from tkinter import messagebox
 from PIL import ImageGrab
 from skimage.metrics import structural_similarity as ssim
 
+from images_to_file import images_to_ppt
+
 # 初始化变量
 prev_frame = None                       # 用于存储前一帧的图像
 threshold = 0.98                        # 设置图像差异阈值，如果连续两帧差异小于此值，则认为换页
@@ -29,8 +31,8 @@ os.makedirs(cropped_dir, exist_ok=True)
 
 # 使用 Tkinter 创建GUI界面
 root = tk.Tk()
+root.iconbitmap("data/icon.ico")        # 程序图标
 root.title("四字成片")
-
 
 # 鼠标左键按下时开始选择区域，右键撤销上一个选择点
 def start_selecting_area(event, x, y, flags, param):
@@ -198,7 +200,6 @@ def stop_recording():
 # 按“合”按钮合成PPT
 def combine_images_to_ppt():
     """"将提取到的图片合成为PPT"""
-    from images_to_file import images_to_ppt
 
     global is_recording, current_status
 
@@ -217,14 +218,6 @@ def combine_images_to_ppt():
         current_status = "已合成PPT文件，请及时另存"    # 更新状态
         enable()
         return
-
-# python运行log
-from PIL import  Image, ImageTk
-logo_path = "data/flerken.jpg"
-logo_image = Image.open(logo_path)  # 使用 PIL 打开图片
-logo_image = logo_image.resize((32, 32))  # 调整图标大小为适合窗口的大小
-logo_tk = ImageTk.PhotoImage(logo_image)  # 转换为 Tkinter 可显示的格式
-root.iconphoto(True, logo_tk)             # 设置窗口图标
 
 # # 设置窗口最大尺寸
 # root.maxsize(800, 600)        # 宽，高
