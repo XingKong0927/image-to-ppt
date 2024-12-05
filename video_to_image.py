@@ -29,7 +29,7 @@ os.makedirs(cropped_dir, exist_ok=True)
 
 # 使用 Tkinter 创建GUI界面
 root = tk.Tk()
-root.title("星的PPT自动提取工具")
+root.title("四字成片")
 
 
 # 鼠标左键按下时开始选择区域，右键撤销上一个选择点
@@ -218,13 +218,13 @@ def combine_images_to_ppt():
         enable()
         return
 
-# # python运行log
-# from PIL import  Image, ImageTk
-# logo_path = "data/flerken.jpg"
-# logo_image = Image.open(logo_path)  # 使用 PIL 打开图片
-# logo_image = logo_image.resize((32, 32))  # 调整图标大小为适合窗口的大小
-# logo_tk = ImageTk.PhotoImage(logo_image)  # 转换为 Tkinter 可显示的格式
-# root.iconphoto(True, logo_tk)             # 设置窗口图标
+# python运行log
+from PIL import  Image, ImageTk
+logo_path = "data/flerken.jpg"
+logo_image = Image.open(logo_path)  # 使用 PIL 打开图片
+logo_image = logo_image.resize((32, 32))  # 调整图标大小为适合窗口的大小
+logo_tk = ImageTk.PhotoImage(logo_image)  # 转换为 Tkinter 可显示的格式
+root.iconphoto(True, logo_tk)             # 设置窗口图标
 
 # # 设置窗口最大尺寸
 # root.maxsize(800, 600)        # 宽，高
