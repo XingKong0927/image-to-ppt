@@ -31,10 +31,9 @@ def to_ppt_image(img_dir, cropped_dir):
         save_cropped_ppt_regions(image_path, boxes, output_dir=cropped_dir)
 
 if __name__ == '__main__':
-    img_dir = "data\\raw1"    # 待处理照片路径
-
-    # 创建裁剪区域输出文件夹
-    cropped_dir = "data\\cropped_ppt1"
+    img_dir0 = "nie"         # 待处理照片路径
+    img_dir = "data\\{}".format(img_dir0)
+    cropped_dir = "data\\cropped_{}".format(img_dir0)   # 创建裁剪区域输出文件夹
     os.makedirs(cropped_dir, exist_ok=True)
 
     # 应用训练好的maskrcnn模型预测并裁剪图片，并保存到文件夹中
@@ -44,5 +43,5 @@ if __name__ == '__main__':
     # images_to_pdf(cropped_dir, output_pdf_path="output_ppt.pdf")
 
     # 使用裁剪后的图片生成PPT
-    images_to_ppt(cropped_dir, output_ppt_path="output_ppt1.pptx", slide_size="widescreen")
+    images_to_ppt(cropped_dir, output_ppt_path="{}.pptx".format(img_dir0), slide_size="widescreen")
 

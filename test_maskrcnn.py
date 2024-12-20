@@ -176,14 +176,14 @@ def visualize_quadrilateral_results(image_path, quadrilateral_contours, output_p
     for contour in quadrilateral_contours:
         cv2.polylines(image, [contour], isClosed=True, color=(0, 255, 0), thickness=2)
 
-    # # 显示或保存结果
+    # # 弹出图片显示识别结果
     # cv2.imshow("Detected PPT Regions as Quadrilaterals", image)
     # cv2.waitKey(0)
     # cv2.destroyAllWindows()
 
-    # 保存结果
-    if output_path:
-        cv2.imwrite(output_path, image)
+    # # 保存图片识别结果
+    # if output_path:
+    #     cv2.imwrite(output_path, image)
 
 def save_cropped_ppt_regions(image_path, boxes, output_dir="cropped_ppt"):
     """将检测出的 PPT 区域裁剪并保存
@@ -224,7 +224,7 @@ if __name__ == '__main__':
     model_path = "mask_rcnn_ppt1.pth"
     model = get_trained_mask_rcnn_model(model_path, num_classes=2)
     
-    image_path = "data\\raw2\\20240922173022.jpg"     # 替换为要检测的图片路径
+    image_path = "data\\a1\\IMG_20241218_112805.jpg"     # 替换为要检测的图片路径
 
     # # 预测并生成多边形曲线轮廓
     # boxes, masks = predict_ppt_regions_with_mask(model, image_path, threshold=0.8)

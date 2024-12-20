@@ -13,7 +13,7 @@ from tkinter import messagebox
 from PIL import ImageGrab
 from skimage.metrics import structural_similarity as ssim
 
-from images_to_file import images_to_ppt
+from tools.images_to_file import images_to_ppt
 
 # 初始化变量
 prev_frame = None                       # 用于存储前一帧的图像
