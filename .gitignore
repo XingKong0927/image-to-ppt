@@ -31,3 +31,6 @@ TestResults.xml
 /四字成片
 /tools/__pycache__
 /四字成片-调试版
+/四字成片1.0
+*.pyc
+/四字成片1.2
