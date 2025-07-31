@@ -261,85 +261,84 @@ def start_auto_recording():
 def record_ppt(target_monitor):  # 添加参数接收目标显示器信息
     global prev_frame, ppt_area, is_recording, frame_count, current_status
 
-    # 调用系统API阻止休眠：新的常量定义
-    ES_CONTINUOUS = 0x80000000
-    ES_SYSTEM_REQUIRED = 0x00000001
-    # 定义Windows API函数
-    set_thread_exec_state = ctypes.windll.kernel32.SetThreadExecutionState
-    set_thread_exec_state.argtypes = [ctypes.wintypes.ULONG]
-    set_thread_exec_state.restype = ctypes.wintypes.ULONG
+    def prevent_sleep():
+        """防休眠方法
 
-    try:
-        # 阻止系统休眠
-        set_thread_exec_state(ES_CONTINUOUS | ES_SYSTEM_REQUIRED)
+        方法：模拟按键（Shift+F15无实际作用的组合键）"""
+        ctypes.windll.user32.keybd_event(0x10, 0, 0, 0)  # Shift
+        ctypes.windll.user32.keybd_event(0x7E, 0, 0, 0)  # F15
+        ctypes.windll.user32.keybd_event(0x7E, 0, 2, 0)  # F15 release
+        ctypes.windll.user32.keybd_event(0x10, 0, 2, 0)  # Shift release
 
-        with mss.mss() as sct:
-            # 根据传入的显示器信息创建截图区域
-            monitor_dict = {
-                "left": target_monitor["left"],
-                "top": target_monitor["top"],
-                "width": target_monitor["width"],
-                "height": target_monitor["height"]
-            }
+    # prevent_sleep()  # 初始调用防休眠 
 
-            while is_recording:
-                sct_img = sct.grab(monitor_dict)        # 对目标显示器截图
-                frame = np.array(sct_img)
-                frame = cv2.cvtColor(frame, cv2.COLOR_BGRA2BGR)
+    with mss.mss() as sct:
+        # 根据传入的显示器信息创建截图区域
+        monitor_dict = {
+            "left": target_monitor["left"],
+            "top": target_monitor["top"],
+            "width": target_monitor["width"],
+            "height": target_monitor["height"]
+        }
 
-                # 修正坐标转换逻辑（绝对坐标转显示器相对坐标）
-                x1 = ppt_area[0][0] - target_monitor["left"]
-                y1 = ppt_area[0][1] - target_monitor["top"]
-                x2 = ppt_area[1][0] - target_monitor["left"]
-                y2 = ppt_area[1][1] - target_monitor["top"]
+        while is_recording:
+            # 每5帧执行一次防休眠操作
+            if frame_count % 5 == 0:
+                prevent_sleep()
 
-                # 添加边界检查确保不越界
-                height, width = frame.shape[:2]
-                x1, y1 = max(0, x1), max(0, y1)
-                x2, y2 = min(width, x2), min(height, y2)
+            sct_img = sct.grab(monitor_dict)        # 对目标显示器截图
+            frame = np.array(sct_img)
+            frame = cv2.cvtColor(frame, cv2.COLOR_BGRA2BGR)
 
-                ppt_frame = frame[y1:y2, x1:x2]
+            # 修正坐标转换逻辑（绝对坐标转显示器相对坐标）
+            x1 = ppt_area[0][0] - target_monitor["left"]
+            y1 = ppt_area[0][1] - target_monitor["top"]
+            x2 = ppt_area[1][0] - target_monitor["left"]
+            y2 = ppt_area[1][1] - target_monitor["top"]
 
-                # 将当前帧转换为灰度图，减少计算量
-                gray_frame = cv2.cvtColor(ppt_frame, cv2.COLOR_BGR2GRAY)
+            # 添加边界检查确保不越界
+            height, width = frame.shape[:2]
+            x1, y1 = max(0, x1), max(0, y1)
+            x2, y2 = min(width, x2), min(height, y2)
 
-                # 如果是第一帧，则仅保存图片
-                if prev_frame is None:
-                    prev_frame = gray_frame
-                    image_filename = f"{cropped_dir}/video_slide_{time.strftime('%Y%m%d_%H%M%S')}_{frame_count}.png"
-                    cv2.imwrite(image_filename, ppt_frame)
-                    continue
+            ppt_frame = frame[y1:y2, x1:x2]
 
-                # 计算当前帧与前一帧的结构相似度（SSIM）
-                similarity_index, _ = ssim(prev_frame, gray_frame, full=True)
-                # print("当前帧与前一帧相似度：{}".format(similarity_index))
+            # 将当前帧转换为灰度图，减少计算量
+            gray_frame = cv2.cvtColor(ppt_frame, cv2.COLOR_BGR2GRAY)
 
-                # 更新状态显示标签
-                current_status = f"当前帧与前一帧相似度: {similarity_index:.4f}"  # 更新状态
-                disable(step=2)               # 锁定root页面按钮
-
-                # 如果当前帧与前一帧的相似度低于设定阈值，认为 PPT 已经换页
-                if similarity_index < threshold:
-                    print(f"Page change detected at frame {frame_count}")
-
-                    # 保存当前帧为图片
-                    image_filename = f"{cropped_dir}/video_slide_{time.strftime('%Y%m%d_%H%M%S')}_{frame_count}.png"
-                    cv2.imwrite(image_filename, ppt_frame)
-                    slide_images.append(image_filename)  # 将图片路径保存到列表中
-                    print(f"Saved slide as {image_filename}")
-
-                # 更新上一帧为当前帧，为下一次对比做准备
+            # 如果是第一帧，则仅保存图片
+            if prev_frame is None:
                 prev_frame = gray_frame
+                image_filename = f"{cropped_dir}/video_slide_{time.strftime('%Y%m%d_%H%M%S')}_{frame_count}.png"
+                cv2.imwrite(image_filename, ppt_frame)
+                continue
 
-                # 增加帧数计数器（用于调试）
-                frame_count += 1
+            # 计算当前帧与前一帧的结构相似度（SSIM）
+            similarity_index, _ = ssim(prev_frame, gray_frame, full=True)
+            # print("当前帧与前一帧相似度：{}".format(similarity_index))
 
-                # 每过1秒查看一下屏幕
-                time.sleep(1)
+            # 更新状态显示标签
+            current_status = f"当前帧与前一帧相似度: {similarity_index:.4f}"  # 更新状态
+            disable(step=2)               # 锁定root页面按钮
 
-    finally:
-        # 恢复系统默认电源设置
-        set_thread_exec_state(ES_CONTINUOUS)
+            # 如果当前帧与前一帧的相似度低于设定阈值，认为 PPT 已经换页
+            if similarity_index < threshold:
+                print(f"Page change detected at frame {frame_count}")
+
+                # 保存当前帧为图片
+                image_filename = f"{cropped_dir}/video_slide_{time.strftime('%Y%m%d_%H%M%S')}_{frame_count}.png"
+                cv2.imwrite(image_filename, ppt_frame)
+                slide_images.append(image_filename)  # 将图片路径保存到列表中
+                print(f"Saved slide as {image_filename}")
+
+            # 更新上一帧为当前帧，为下一次对比做准备
+            prev_frame = gray_frame
+
+            # 增加帧数计数器（用于调试）
+            frame_count += 1
+
+            # 每过1秒查看一下屏幕
+            time.sleep(1)
 
     enable()            # 显示root页面按钮
     return
